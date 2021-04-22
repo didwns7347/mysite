@@ -8,6 +8,7 @@ import java.sql.SQLException;
 
 import org.springframework.stereotype.Repository;
 
+import com.bitacademy.mysite.exception.UserRepositoryException;
 import com.bitacademy.mysite.vo.UserVo;
 
 @Repository
@@ -62,7 +63,7 @@ public class UserRepository {
 		return userVo;
 	}
 
-	public UserVo findByEmailAndPassword(UserVo vo) {
+	public UserVo findByEmailAndPassword(UserVo vo) throws UserRepositoryException {
 		UserVo userVo = null;
 		
 		Connection conn = null;
@@ -93,7 +94,7 @@ public class UserRepository {
 				userVo.setName(name);
 			}
 		} catch (SQLException e) {
-			System.out.println("error:" + e);
+			throw new UserRepositoryException(e.toString());
 		} finally {
 			try {
 				if(rs != null) {

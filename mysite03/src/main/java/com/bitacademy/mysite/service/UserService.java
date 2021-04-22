@@ -23,5 +23,5 @@ public class UserService {
 
 	public UserVo getUser(Long no) {
 		return userRepository.findByNo(no);
-	} 
+	}	
 }
