@@ -9,4 +9,7 @@
 			values (null, #{name }, #{email }, #{password }, #{gender }, now())
 		]]>
 	</insert>
+	
+	
+	
 </mapper>
