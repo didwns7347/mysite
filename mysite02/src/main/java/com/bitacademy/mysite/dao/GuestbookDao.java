@@ -51,6 +51,7 @@ public class GuestbookDao  {
 			
 		} catch (SQLException e) {
 			System.out.println("error:" + e);
+			return list;
 		} finally {
 			try {
 				// 3. 자원정리
