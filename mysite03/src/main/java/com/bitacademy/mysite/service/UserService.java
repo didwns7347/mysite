@@ -24,4 +24,12 @@ public class UserService {
 	public UserVo getUser(Long no) {
 		return userRepository.findByNo(no);
 	}	
+	public void updateUser(UserVo vo) {
+		userRepository.update(vo);
+	}
+
+	public boolean existUser(String email) {
+		UserVo userVo = userRepository.findByEmailAndPassword(email);
+		return userVo != null;
+	}	
 }

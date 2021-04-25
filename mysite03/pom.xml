@@ -9,11 +9,11 @@
 	</parent>
 	<artifactId>mysite03</artifactId>
 	<packaging>war</packaging>
-	
+
 	<properties>
 		<org.springframework-version>4.3.8.RELEASE</org.springframework-version>
 	</properties>
-	
+
 	<dependencies>
 		<!-- Spring Core, Spring Context -->
 		<dependency>
@@ -21,28 +21,28 @@
 			<artifactId>spring-context</artifactId>
 			<version>${org.springframework-version}</version>
 		</dependency>
-		
+
 		<!-- Spring Web -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<version>${org.springframework-version}</version>
 		</dependency>
-		
+
 		<!-- Spring MVC -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>${org.springframework-version}</version>
 		</dependency>
-		
+
 		<!-- jstl -->
 		<dependency>
-		    <groupId>javax.servlet</groupId>
-		    <artifactId>jstl</artifactId>
-		    <version>1.2</version>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
 		</dependency>
-		
+
 		<!-- Spring JDBC -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -62,22 +62,31 @@
 			<version>1.2.0</version>
 		</dependency>
 
-		<!-- Mysql JDBC Driver -->
+		<!-- mysql jdbc driver -->
 		<dependency>
-		    <groupId>mysql</groupId>
-		    <artifactId>mysql-connector-java</artifactId>
-		    <version>5.1.6</version>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.21</version>
 		</dependency>
-			
+
 		<!-- Common DBCP -->
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
 			<version>1.4</version>
 		</dependency>
-						
+
+
+		<!-- jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.9.8</version>
+		</dependency>
+
+
 	</dependencies>
-	
+
 	<build>
 		<finalName>mysite03</finalName>
 		<resources>
@@ -107,5 +116,5 @@
 			</plugin>
 		</plugins>
 	</build>
-		
+
 </project>
