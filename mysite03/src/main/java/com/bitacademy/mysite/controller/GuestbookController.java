@@ -20,7 +20,6 @@ public class GuestbookController {
 	
 	@RequestMapping("")
 	public String index(Model model) {
-		System.out.println("index");
 		List<GuestbookVo> list = guestbookService.findAll();
 		
 		model.addAttribute("list", list);

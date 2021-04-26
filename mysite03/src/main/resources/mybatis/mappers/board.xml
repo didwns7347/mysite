@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board">
+	<select id="findByNo" parameterType="long" resultType="boardvo">
+		<![CDATA[
+			select title,contents,g_no,depth,g_order from board where no=#{no}
+		]]>
+	</select>
+	
+	<select id="findPage" parameterType="long" resultType="boardvo">
+		<![CDATA[
+			select no, title, writer, contents,g_no,depth,reg_date from board order by g_no desc, g_order asc ,depth asc,no asc limit #{start},10;
+		]]>
+	</select>
+	
+	<select id="getGorderByParent" parameterType="long" resultType="long">
+		<![CDATA[
+			select max(g_order) from board where parent=#{no}
+		]]>
+	</select>
+	
+	<select id="getCount" resultType="long">
+		<![CDATA[
+			select count(no) from board
+		]]>
+	</select>
+
+	<select id="getAuto" resultType="long">
+		<![CDATA[
+			SELECT max(no) FROM board
+		]]>
+	</select>
+
+	<update id="before" parameterType="boardvo">
+		<![CDATA[
+			update board set g_order=g_order+1 where g_no=#{g_no} AND g_order>=#{g_order}
+		]]>
+	</update>
+	
+	<insert id="Insert" parameterType="boardvo">
+		<![CDATA[
+			 insert into board values (null, #{title}, #{contents}, #{writer}, #{g_no}, #{depth}, now(), #{g_order}, #{parent})
+		]]>
+	</insert>
+	
+	
+
+</mapper>	 	

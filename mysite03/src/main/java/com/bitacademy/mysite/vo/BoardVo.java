@@ -4,7 +4,7 @@ public class BoardVo {
 	@Override
 	public String toString() {
 		return "BoardVo [no=" + no + ", title=" + title + ", contents=" + contents + ", writer=" + writer + ", g_no="
-				+ g_no + ", depth=" + depth + ", date=" + date + "]";
+				+ g_no + ", depth=" + depth + ", date=" + this.reg_date + "]";
 	}
 	private long no;
 	private String title;
@@ -12,19 +12,14 @@ public class BoardVo {
 	private String writer;
 	private long g_no;
 	private int depth;
-	private String date;
-	private long gorder;
+	private String reg_date;
+	private long g_order;
 	private long parent;
 	final private String del="delContent123!@";
 	public long getNo() {
 		return no;
 	}
-	public String getDate() {
-		return date;
-	}
-	public void setDate(String date) {
-		this.date = date;
-	}
+	
 	public void setNo(long no) {
 		this.no = no;
 	}
@@ -59,11 +54,11 @@ public class BoardVo {
 	public void setDepth(int depth) {
 		this.depth = depth;
 	}
-	public long getGorder() {
-		return gorder;
+	public long getG_order() {
+		return g_order;
 	}
-	public void setGorder(long gorder) {
-		this.gorder = gorder;
+	public void setG_order(long gorder) {
+		this.g_order = gorder;
 	}
 	public long getParent() {
 		return parent;
@@ -73,6 +68,14 @@ public class BoardVo {
 	}
 	public String getDel() {
 		return del;
+	}
+
+	public String getReg_date() {
+		return reg_date;
+	}
+
+	public void setReg_date(String reg_date) {
+		this.reg_date = reg_date;
 	}
 
 	

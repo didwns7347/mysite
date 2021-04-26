@@ -17,59 +17,64 @@ public class BoardService {
 		return boardRepository.findPage(page);
 	}
 
-	public int getCount() {
+	public long getCount() {
 		// TODO Auto-generated method stub
 		return boardRepository.getCount();
 	}
 
-	public int getTotalPage(int total) {
-		int totalpage=(total%10==0)? total/10:total/10+1;
+	public long getTotalPage(long total) {
+		long totalpage=(total%10==0)? total/10:total/10+1;
 		// TODO Auto-generated method stub
 		return totalpage;
 	}
 
-	public int getIdx(String index, int lastidx) {
+	public int getIdx(int page) {
 		// TODO Auto-generated method stub
-		int idx;
-		if (index==null) {
-			return 1;
-		}
-		else {
-			idx=Integer.parseInt(index);
-			System.out.println(idx);
-			if(idx<1)
-				idx=1;
-			else if(idx>lastidx)
-				idx=lastidx;
-			return idx;
-		}
+		return page/5+1;
 		
 	}
 	
-	public int getLastIdx(int total) {
-		int lastidx=(total%50==0)? total/50+1:total/50+2;
+	public long getLastIdx(long total) {
+		long lastidx=(total%50==0)? total/50+1:total/50+2;
 		return lastidx;
 	}
 
-	public int getPage(String move, int total, int page) {
+	public int getPage(String move, long totalpage, int page) {
 		if(move!=null && "u".equals(move)) {
-			page++;
-			if(page>total) {
-				page=total;
+			page+=5;
+			if(page>totalpage) {
+				page=(int) totalpage;
 			}
 		}
-		if(move!=null && "u".equals(move)) {
+		if(move!=null && "d".equals(move)) {
 			if(page-5<1) {
 				page=1;
 			}
 			else {
-				page=(page-5)/5+4;
+				page=page-5;
 			}
-			if(page>total) {
-				page=1;
-			}
+			
 		}
+		System.out.println(page);
 		return page;
+	}
+
+	public void insert(BoardVo vo) {
+		vo.setG_no(boardRepository.getAuto());
+		boardRepository.newinsert(vo);
+	}
+
+	public BoardVo findByNo(long no) {
+		return boardRepository.findByNo(no);
+		
+	}
+
+	public boolean reinsert(BoardVo vo) {
+		// TODO Auto-generated method stub
+		long child=boardRepository.getGorderByP(vo.getParent())+1;
+		vo.setG_order(Math.max(vo.getG_order(), child));
+		return boardRepository.reinsert(vo);
+		
 	}
 
 }

@@ -8,11 +8,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.bitacademy.mysite.vo.BoardVo;
 @Repository
 public class BoardRepository {
+	@Autowired
+	private SqlSession sqlSession;
 	private Connection getConnection() throws SQLException {
 		Connection conn = null;
 
@@ -74,180 +78,25 @@ public class BoardRepository {
 		return res;
 	}
 	public long getAuto() {
-		
 		long res=-1;
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			conn = getConnection();
-
-			// 3. SQL 준비
-			String sql ="SELECT AUTO_INCREMENT FROM information_schema.tables WHERE table_name = 'board' AND table_schema = DATABASE( )";
-			String sql2="SELECT max(no) FROM board";
-			pstmt = conn.prepareStatement(sql2);
-
-			// 4. 바인딩
-
-			// 5. SQL문 실행
-			rs = pstmt.executeQuery();
-			
-			// 6. 데이터 가져오기
-			if (rs.next()) {
-				res=rs.getLong(1);
-			}
-
-			
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} finally {
-			// 자원정리
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (pstmt != null) {
-					pstmt.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
+		res=sqlSession.selectOne("getAuto");
 		return res;
 	}
 	
 		
 	
 	public boolean newinsert(BoardVo vo) {
-		boolean result = false;
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-
-		try {
-			conn = getConnection();
-
-			// 3. SQL 준비
-			
-			String sql = " insert" + "   into board" + " values (null, ?, ?, ?, ?, ?, now(),?,?)";
-
-			pstmt = conn.prepareStatement(sql);
-
-			// 4. 바인딩
-			pstmt.setString(1, vo.getTitle());
-			pstmt.setString(2, vo.getContents());
-			pstmt.setString(3, vo.getWriter());
-			pstmt.setLong(4, vo.getG_no());
-			pstmt.setInt(5, vo.getDepth());
-			pstmt.setLong(6, vo.getGorder());
-			pstmt.setLong(7, vo.getParent());
-
-			// 5. SQL문 실행
-			int count = pstmt.executeUpdate();
-
-			// 6. 결과
-			result = count == 1;
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} finally {
-			// 자원정리
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return result;
+		int count = sqlSession.insert("Insert", vo);
+		return count==1;
 	}
-	public boolean before(long gno,long gorder) {
-		boolean result = false;
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-
-		try {
-			conn = getConnection();
-
-			// 3. SQL 준비
-			String fsql="update board set g_order=g_order+1 where g_no=? AND g_order>=?";
-			pstmt=conn.prepareStatement(fsql);
-			pstmt.setLong(1, gno);
-			pstmt.setLong(2, gorder);
-			int cnt=pstmt.executeUpdate();
-			// 6. 결과
-			result = cnt >=0;
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} finally {
-			// 자원정리
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return result;
+	public boolean before(BoardVo vo) {
+		sqlSession.update("before", vo);
+		return true;
 	}
 	public boolean reinsert(BoardVo vo) {
-		boolean result = false;
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-
-		try {
-			conn = getConnection();
-
-			// 3. SQL 준비
-		
-			this.before(vo.getG_no(), vo.getGorder());
-			String sql = " insert" + "   into board" + " values (null, ?, ?, ?, ?, ?, now(),?,?)";
-
-			pstmt = conn.prepareStatement(sql);
-
-			// 4. 바인딩
-			pstmt.setString(1, vo.getTitle());
-			pstmt.setString(2, vo.getContents());
-			pstmt.setString(3, vo.getWriter());
-			pstmt.setLong(4, vo.getG_no());
-			pstmt.setInt(5, vo.getDepth());
-			pstmt.setLong(6, vo.getGorder());
-			pstmt.setLong(7, vo.getParent());
-			
-			// 5. SQL문 실행
-			int count = pstmt.executeUpdate();
-
-			// 6. 결과
-			result = count == 1;
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} finally {
-			// 자원정리
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return result;
+		this.before(vo);
+		int count=sqlSession.insert("Insert", vo);
+		return count==1;
 	}
 	public List<BoardVo> findAll() {
 		List<BoardVo> list = new ArrayList<>();
@@ -282,7 +131,7 @@ public class BoardRepository {
 				vo.setWriter(writer);
 				vo.setNo(no);
 				vo.setContents(contents);
-				vo.setDate(date);
+				vo.setReg_date(date);
 				vo.setDepth(Integer.parseInt(depth));
 				vo.setG_no(Long.parseLong(gno));
 
@@ -309,56 +158,8 @@ public class BoardRepository {
 
 		return list;
 	}
-	public BoardVo findByNo(int no) {
-		BoardVo vo = new BoardVo();
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			conn = getConnection();
-
-			// 3. SQL 준비
-			String sql ="select title,contents,g_no,depth,g_order from board where no=? ";
-		
-			pstmt = conn.prepareStatement(sql);
-
-			// 4. 바인딩
-			pstmt.setLong(1, no);
-			// 5. SQL문 실행
-			rs = pstmt.executeQuery();
-			
-			// 6. 데이터 가져오기
-			if (rs.next()) {
-				vo.setTitle(rs.getString(1));
-				vo.setContents(rs.getString(2));
-				vo.setG_no(rs.getLong(3));
-				vo.setDepth(rs.getInt(4));
-				vo.setNo(no);
-				vo.setGorder(rs.getLong(5));
-			}
-
-			
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} finally {
-			// 자원정리
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (pstmt != null) {
-					pstmt.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-	
-		return vo;
+	public BoardVo findByNo(long no) {
+		return sqlSession.selectOne("findByNo", no);
 	}
 	public boolean deleteV1(long no) {
 		int count=0;
@@ -433,113 +234,13 @@ public class BoardRepository {
 		
 	}
 	public List<BoardVo> findPage(int page) {
-		List<BoardVo> list = new ArrayList<>();
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			conn = getConnection();
-			long start=(long)10*page;
-			// 3. SQL 준비
-			
-			String sql ="select no, title, writer, contents,g_no,depth,reg_date from board "
-					+ "order by g_no desc,"
-					+ "g_order asc ,"
-					+ "depth asc,"
-					+ "no asc "
-					+" limit  "+start+",10";
-
-			pstmt = conn.prepareStatement(sql);
-
-			// 4. 바인딩
-
-			// 5. SQL문 실행
-			rs = pstmt.executeQuery();
-
-			// 6. 데이터 가져오기
-			while (rs.next()) {
-				Long no = rs.getLong(1);
-				String title = rs.getString(2);
-				String writer = rs.getString(3);
-				String contents = rs.getString(4);
-				String gno=rs.getString(5);
-				String depth = rs.getString(6);
-				String date = rs.getString(7);
-
-				BoardVo vo = new BoardVo();
-				vo.setTitle(title);
-				vo.setWriter(writer);
-				vo.setNo(no);
-				vo.setContents(contents);
-				vo.setDate(date);
-				vo.setDepth(Integer.parseInt(depth));
-				vo.setG_no(Long.parseLong(gno));
-
-				list.add(vo);
-			}
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} finally {
-			// 자원정리
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (pstmt != null) {
-					pstmt.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return list;
+		long start=(long)10*(page-1);
+		return sqlSession.selectList("findPage", start);
+		
 	}
-	public int getCount() {
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			conn = getConnection();
-
-			// 3. SQL 준비
-			String sql ="select count(no) from board";
-
-			pstmt = conn.prepareStatement(sql);
-
-			// 4. 바인딩
-
-			// 5. SQL문 실행
-			rs = pstmt.executeQuery();
-
-			// 6. 데이터 가져오기
-			
-			if(rs.next()) {
-				return rs.getInt(1);
-			}
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} finally {
-			// 자원정리
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (pstmt != null) {
-					pstmt.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return 0;
+	public long getCount() {
+		return sqlSession.selectOne("getCount");
+		
 	}
 	public long getGorderRe(long parent) {
 		// TODO Auto-generated method stub
@@ -586,47 +287,7 @@ public class BoardRepository {
 		return 0l;
 	}
 	public long getGorderByP(long no) {
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			conn = getConnection();
-
-			// 3. SQL 준비
-			String sql ="select max(g_order) from board where parent=?";
-
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setLong(1, no);
-			// 4. 바인딩
-
-			// 5. SQL문 실행
-			rs = pstmt.executeQuery();
-
-			// 6. 데이터 가져오기
-			
-			if(rs.next()) {
-				return rs.getLong(1);
-			}
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} finally {
-			// 자원정리
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (pstmt != null) {
-					pstmt.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return 0l;
+		return sqlSession.selectOne("getGorderByParent",no);
 	}
 	
 	public long getGorder(long gno) {

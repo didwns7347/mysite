@@ -14,9 +14,6 @@ public class GuestbookService {
 	
 	public List<GuestbookVo> findAll() {
 		List<GuestbookVo> list=guestbookRepository.findAll();
-		for(GuestbookVo vo:list) {
-			System.out.println(vo.toString());
-		}
 		return list;
 	}
 

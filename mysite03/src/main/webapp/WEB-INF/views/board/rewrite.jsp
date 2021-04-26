@@ -14,12 +14,13 @@
 		<c:import url="/WEB-INF/views/includes/header.jsp" />
 		<div id="content">
 			<div id="board">
-				<form class="board-form" method="post" action="${pageContext.request.contextPath }/board">
+				<form class="board-form" method="post" action="${pageContext.request.contextPath }/board/rewrite">
 					<input type = "hidden" name="g_no" value="${g_no}">
 					<input type = "hidden" name="depth" value="${depth}">
-					<input type= "hidden" name="gorder" value="${gorder}">
+					<input type= "hidden" name="gorder" value="${g_order}">
 					<input type= "hidden" name="parent" value="${parent}">
-					<input type="hidden" name="a" value="readd">
+					<input type= "hidden" name="page" value="${page}">
+					
 					<table class="tbl-ex">
 						<tr>
 							<th colspan="2">글쓰기</th>
@@ -36,7 +37,7 @@
 						</tr>
 					</table>
 					<div class="bottom">
-						<a href="${pageContext.request.contextPath }/board">취소</a>
+						<a href="${pageContext.request.contextPath }/board?page=${page}">취소</a>
 						<input type="submit" value="등록">
 					</div>
 				</form>				

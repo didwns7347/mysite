@@ -22,7 +22,7 @@
 				<table class="tbl-ex">
 				<tr>
 						<th align=center>번호</th>
-						<th align=center>제목${page} ${total}</th>
+						<th align=center>제목${page} ${total} ${authUser.name }</th>
 						<th align=center>글쓴이</th>
 						<th align=center>조회수</th>
 						<th align=center>작성일</th>
@@ -32,17 +32,17 @@
 						<c:choose>
 							<c:when test="${vo.depth==0}">
 								<tr>		
-									<td align=center>[${total-(status.index+(page-1)*10)}]</td>
+									<td align=center>[${total-(page-1)*10-status.index}]</td>
 									<c:if test="${vo.title eq vo.del}">
 										<td>삭제된 글</td>
 									</c:if>
 									<c:if test="${vo.title ne vo.del}">
-										<td ><a href="${pageContext.request.contextPath }/board?a=view&no=${vo.no}" style="test-align:left; padding-left:0px">${vo.title}</a></td>
+										<td ><a href="${pageContext.request.contextPath }/board/view?no=${vo.no}&page=${page}" style="test-align:left; padding-left:0px">${vo.title}</a></td>
 									</c:if>
 									
 									<td align=center>${vo.writer}${del}</td>
 									<td align=center>${vo.depth*10}</td>
-									<td align=center>${vo.date }</td>
+									<td align=center>${vo.reg_date }</td>
 									<c:if test="${vo.writer eq authUser.name}">
 										<td><a href="${pageContext.request.contextPath }/board?a=deleteform&no=${vo.no}" class="del">삭제</a></td>
 									</c:if>
@@ -58,7 +58,7 @@
 										<td style="test-align:left;padding-left : ${vo.depth*20}px" ><img src="${pageContext.request.contextPath }/assets/images/reply.png" />삭제된 글</td>
 									</c:if>
 									<c:if test="${vo.title ne vo.del}">
-										<td align=left><a href="${pageContext.request.contextPath }/board?a=view&no=${vo.no}" style="test-align:left;padding-left : ${vo.depth*20}px"><img src="${pageContext.request.contextPath }/assets/images/reply.png" />${vo.title}</a></td>
+										<td align=left><a href="${pageContext.request.contextPath }/board/view?no=${vo.no}&page=${page}" style="test-align:left;padding-left : ${vo.depth*20}px"><img src="${pageContext.request.contextPath }/assets/images/reply.png" />${vo.title}</a></td>
 									</c:if>
 									
 									<td align=center>${vo.writer}</td>
@@ -84,7 +84,7 @@
 				<div class="pager">
 					<ul>
 						<c:if test="${1 ne index}">
-							<li><a href="${pageContext.request.contextPath }/board?index=${index-1}&page=${page}&go=d">◀</a></li>
+							<li><a href="${pageContext.request.contextPath }/board?page=${page}&move=d">◀</a></li>
 						</c:if>
 					
 						<c:forEach var="i" begin="${5*(index-1)+1}" end="${5*(index-1)+5}">
@@ -98,7 +98,7 @@
 							</c:if>
 						</c:forEach>
 						<c:if test="${index ne lastidx}">
-							<li><a href="${pageContext.request.contextPath }/board?index=${index+1}&page=${page}&go=u">▶</a></li>
+							<li><a href="${pageContext.request.contextPath }/board?page=${page}&move=u">▶</a></li>
 						</c:if>
 					</ul>
 
@@ -108,7 +108,7 @@
 				<!-- pager 추가 -->
 				<div class="bottom">
 					
-					<a href="${pageContext.request.contextPath }/board?a=writeform" id="new-book">
+					<a href="${pageContext.request.contextPath }/board/write" id="new-book">
 					글쓰기
 					</a>
 				</div>				

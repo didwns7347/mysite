@@ -24,13 +24,12 @@ public class GuestbookRepository {
 
 	public boolean delete(GuestbookVo vo) {
 		int count = sqlSession.delete("guestbook.delete",vo);
-		System.out.println(count);
+	
 		return count==1;	
 	}
 
 	public boolean insert(GuestbookVo vo) {
 		int count = sqlSession.insert("guestbook.insert", vo);
-		System.out.println(count);
 		return count==1;
 		
 	}
